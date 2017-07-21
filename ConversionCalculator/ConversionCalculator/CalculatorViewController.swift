@@ -53,11 +53,12 @@ class CalculatorViewController: UIViewController {
         
         bottomText.text = bottomText.text?.components(separatedBy: CharacterSet.decimalDigits).joined()
         upperText.text = upperText.text?.components(separatedBy: CharacterSet.decimalDigits).joined()
+        
         if(bottomText.text?.contains(".") == true){
             bottomText.text?.remove(at: (bottomText.text?.startIndex)!)
         }
         if(upperText.text?.contains(".") == true){
-            upperText.text?.remove(at: (bottomText.text?.startIndex)!)
+            upperText.text?.remove(at: (upperText.text?.startIndex)!)
         }
         
     }
