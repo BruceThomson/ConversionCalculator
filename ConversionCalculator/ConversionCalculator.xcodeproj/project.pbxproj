@@ -96,6 +96,7 @@
 				TargetAttributes = {
 					32A3A7F91F21688E00B99502 = {
 						CreatedOnToolsVersion = 8.3.2;
+						DevelopmentTeam = VCDPA42BG6;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -262,6 +263,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = VCDPA42BG6;
 				INFOPLIST_FILE = ConversionCalculator/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.brucewthomson.ConversionCalculator;
@@ -274,6 +276,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = VCDPA42BG6;
 				INFOPLIST_FILE = ConversionCalculator/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.brucewthomson.ConversionCalculator;
@@ -301,6 +304,7 @@
 				32A3A80E1F21688E00B99502 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

@@ -13,7 +13,13 @@ class CalculatorViewController: UIViewController {
     @IBOutlet weak var upperText: UITextField!
     @IBOutlet weak var bottomText: UITextField!
     
-    var status: String = ""
+    enum status {
+        case f2c
+        case c2f
+        case m2k
+        case k2m
+    }
+    var myStatus: status = .f2c
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -45,6 +51,9 @@ class CalculatorViewController: UIViewController {
             (alertAction) -> Void in
                 self.kilometersToMiles()
         }))
+        converter.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.cancel, handler: {
+            (alertAction) -> Void in
+        }))
         
         self.present(converter, animated: true, completion: nil)
         
@@ -54,118 +63,157 @@ class CalculatorViewController: UIViewController {
         bottomText.text = bottomText.text?.components(separatedBy: CharacterSet.decimalDigits).joined()
         upperText.text = upperText.text?.components(separatedBy: CharacterSet.decimalDigits).joined()
         
-        if(bottomText.text?.contains(".") == true){
+        if((bottomText.text?.contains("-"))! || bottomText.text?.contains(".")  == true){
             bottomText.text?.remove(at: (bottomText.text?.startIndex)!)
+            if(bottomText.text?.contains(".") == true){
+                bottomText.text?.remove(at: (bottomText.text?.startIndex)!)
+            }
         }
-        if(upperText.text?.contains(".") == true){
+        if((upperText.text?.contains("-"))! || upperText.text?.contains(".") == true){
             upperText.text?.remove(at: (upperText.text?.startIndex)!)
+            if(upperText.text?.contains(".") == true){
+                upperText.text?.remove(at: (upperText.text?.startIndex)!)
+            }
         }
-        
     }
     
-    
+    @IBAction func plusMinus(_ sender: Any) {
+        if(bottomText.text?.contains("-") == true){
+            bottomText.text?.remove(at: (bottomText.text?.startIndex)!)
+        } else{
+            bottomText.text?.insert("-", at: (bottomText.text?.startIndex)!)
+        }
+        recalculate()
+    }
     
     @IBAction func zero(_ sender: Any) {
-
-        bottomText.text?.insert("0", at: (bottomText.text?.index((bottomText.text?.endIndex)!, offsetBy: -3))!)
-        recalculate()
-        
+        insertNewChar(newChar: "0")
     }
     @IBAction func decimal(_ sender: Any) {
-        bottomText.text?.insert(".", at: (bottomText.text?.index((bottomText.text?.endIndex)!, offsetBy: -3))!)
-        
+        insertNewChar(newChar: ".")
     }
     @IBAction func one(_ sender: Any) {
-        bottomText.text?.insert("1", at: (bottomText.text?.index((bottomText.text?.endIndex)!, offsetBy: -3))!)
-        recalculate()
+        insertNewChar(newChar: "1")
     }
     @IBAction func two(_ sender: Any) {
-        bottomText.text?.insert("2", at: (bottomText.text?.index((bottomText.text?.endIndex)!, offsetBy: -3))!)
-        recalculate()
+        insertNewChar(newChar: "2")
     }
     @IBAction func three(_ sender: Any) {
-        bottomText.text?.insert("3", at: (bottomText.text?.index((bottomText.text?.endIndex)!, offsetBy: -3))!)
-        recalculate()
+        insertNewChar(newChar: "3")
     }
     @IBAction func four(_ sender: Any) {
-        bottomText.text?.insert("4", at: (bottomText.text?.index((bottomText.text?.endIndex)!, offsetBy: -3))!)
-        recalculate()
+        insertNewChar(newChar: "4")
     }
     @IBAction func five(_ sender: Any) {
-        bottomText.text?.insert("5", at: (bottomText.text?.index((bottomText.text?.endIndex)!, offsetBy: -3))!)
-        recalculate()
+        insertNewChar(newChar: "5")
     }
     @IBAction func six(_ sender: Any) {
-        bottomText.text?.insert("6", at: (bottomText.text?.index((bottomText.text?.endIndex)!, offsetBy: -3))!)
-        recalculate()
+        insertNewChar(newChar: "6")
     }
     @IBAction func seven(_ sender: Any) {
-        bottomText.text?.insert("7", at: (bottomText.text?.index((bottomText.text?.endIndex)!, offsetBy: -3))!)
-        recalculate()
+        insertNewChar(newChar: "7")
     }
     @IBAction func eight(_ sender: Any) {
-        bottomText.text?.insert("8", at: (bottomText.text?.index((bottomText.text?.endIndex)!, offsetBy: -3))!)
-        recalculate()
+        insertNewChar(newChar: "8")
     }
     @IBAction func nine(_ sender: Any) {
-        bottomText.text?.insert("9", at: (bottomText.text?.index((bottomText.text?.endIndex)!, offsetBy: -3))!)
-        recalculate()
+        insertNewChar(newChar: "9")
     }
     
     func fahrenheitToCelsius() {
-        status = "f2c"
+        myStatus = .f2c
         if bottomText.text?.isEmpty == true {
             self.upperText.text = " ºC"
             self.bottomText.text = " ºF"
             return
         }
         
+        self.bottomText.text = calculateString(calculation: calculateValue())! + " ºF"
         
-        var calculation = (bottomText.text?.substring(to: (bottomText.text?.index((bottomText.text?.endIndex)!, offsetBy: -3))!) as NSString?)!.doubleValue
-        
-        
-        let formatter = NumberFormatter()
-        formatter.maximumFractionDigits = 2
-        formatter.roundingMode = .down
-        var result = formatter.string(from: NSNumber(value: calculation))
-        
-        
-        self.bottomText.text = result! + " ºF"
-        
-        calculation = (calculation - 32) * 0.5556
-        result = formatter.string(from: NSNumber(value: calculation))
-        self.upperText.text = result! + " ºC"
-    
-        
-        
-//        var number = bottomText.text?.components(separatedBy: CharacterSet.decimalDigits).joined()
-//        number.
-//        return bottomText.text?.substringWithRange(Range<(bottomText.text?).Index>(start: (bottomText.text?).startIndex, end: (bottomText.text?).endIndex, offsetBy: 3))
+        let calculation = (calculateValue() - 32) * 0.5556
+
+        self.upperText.text = calculateString(calculation: calculation)! + " ºC"
     }
     
     func celsiusToFahrenheit() {
-        self.upperText.text = " ºF"
-        self.bottomText.text = " ºC"
+        myStatus = .c2f
+        if bottomText.text?.isEmpty == true {
+            self.upperText.text = " ºC"
+            self.bottomText.text = " ºF"
+            return
+        }
+        self.bottomText.text = calculateString(calculation: calculateValue())! + " ºC"
+        
+        let calculation = (calculateValue() * 1.8) + 32
+        
+        self.upperText.text = calculateString(calculation: calculation)! + " ºF"
     }
     
     func milesToKilometers() {
-        self.upperText.text = " km"
-        self.bottomText.text = " mi"
+        myStatus = .m2k
+        if bottomText.text?.isEmpty == true {
+            self.upperText.text = " km"
+            self.bottomText.text = " mi"
+            return
+        }
+        self.bottomText.text = calculateString(calculation: calculateValue())! + " mi"
+        
+        let calculation = (calculateValue() * 1.609344)
+        
+        self.upperText.text = calculateString(calculation: calculation)! + " km"
     }
     
     func kilometersToMiles() {
-        self.upperText.text = " mi"
-        self.bottomText.text = " km"
+        myStatus = .k2m
+        if bottomText.text?.isEmpty == true {
+            self.upperText.text = " mi"
+            self.bottomText.text = " km"
+            return
+        }
+        self.bottomText.text = calculateString(calculation: calculateValue())! + " km"
+        
+        let calculation = (calculateValue() * 0.621371)
+        
+        self.upperText.text = calculateString(calculation: calculation)! + " mi"
     }
     
     func recalculate() {
-        switch status {
-        case "f2c":
+        switch myStatus {
+        case .f2c:
             fahrenheitToCelsius()
-        default:
-            return
+        case .c2f:
+            celsiusToFahrenheit()
+        case .m2k:
+            milesToKilometers()
+        case .k2m:
+            kilometersToMiles()
         }
     }
-
-
+    
+    func calculateValue () -> Double {
+        return (bottomText.text?.substring(to: (bottomText.text?.index((bottomText.text?.endIndex)!, offsetBy: -3))!) as NSString?)!.doubleValue
+    }
+    
+    func calculateString (calculation: Double) -> String? {
+        let formatter = NumberFormatter()
+        formatter.maximumFractionDigits = 2
+        formatter.roundingMode = .down
+        return formatter.string(from: NSNumber(value: calculation))
+    }
+    
+    func insertNewChar (newChar: Character) {
+        bottomText.text?.insert(newChar, at: (bottomText.text?.index((bottomText.text?.endIndex)!, offsetBy: -3))!)
+        if newChar != "." {
+            if bottomText.text?[(bottomText.text?.characters.index((bottomText.text?.startIndex)!, offsetBy: 1))!] != "." && newChar != "0"{
+                recalculate()
+            }
+        }
+//        var previousChar = bottomText.text?.characters.startIndex
+    }
+    
+    override var preferredStatusBarStyle: UIStatusBarStyle{
+        return .lightContent
+    }
+    
 }
+
