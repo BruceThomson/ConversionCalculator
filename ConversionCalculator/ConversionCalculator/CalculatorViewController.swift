@@ -20,6 +20,7 @@ class CalculatorViewController: UIViewController {
         case k2m
     }
     var myStatus: status = .f2c
+    var previousChar: Character! = nil
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -202,13 +203,16 @@ class CalculatorViewController: UIViewController {
     }
     
     func insertNewChar (newChar: Character) {
+        
+        let previousString = bottomText.text?.components(separatedBy: " ")
+        let previousChar = previousString?[0].characters.last
         bottomText.text?.insert(newChar, at: (bottomText.text?.index((bottomText.text?.endIndex)!, offsetBy: -3))!)
+        
         if newChar != "." {
-            if bottomText.text?[(bottomText.text?.characters.index((bottomText.text?.startIndex)!, offsetBy: 1))!] != "." && newChar != "0"{
+            if !(newChar == "0" && previousChar == ".") {
                 recalculate()
             }
         }
-//        var previousChar = bottomText.text?.characters.startIndex
     }
     
     override var preferredStatusBarStyle: UIStatusBarStyle{
